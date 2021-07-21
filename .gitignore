@@ -10,6 +10,3 @@
 *.iws
 
 **/target/**
-commons/src/main/main.iml
-core/src/main/main.iml
-web/src/main/main.iml
