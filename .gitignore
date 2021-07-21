@@ -1,0 +1,12 @@
+
+.DS_Store
+/informer/.idea
+/.idea
+/.idea/workspace.xml
+/.idea/vcs.xml
+/.idea/libraries
+*.iml
+*.ipr
+*.iws
+
+**/target/**
