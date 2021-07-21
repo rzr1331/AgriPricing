@@ -1,1 +1,15 @@
+
+.DS_Store
+/informer/.idea
+/.idea
+/.idea/workspace.xml
+/.idea/vcs.xml
+/.idea/libraries
+*.iml
+*.ipr
+*.iws
+
 **/target/**
+commons/src/main/main.iml
+core/src/main/main.iml
+web/src/main/main.iml
