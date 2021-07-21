@@ -1,6 +1,5 @@
 package parsers;
 
-import com.sun.istack.internal.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,10 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UnMappedInfoDto {
 
-    @NotNull
     private UnMappedEntityType unMappedEntity;
 
-    @NotNull
     private String rawValue;
 
 

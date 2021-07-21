@@ -10,7 +10,16 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class DateUtils {
-    
+
+
+    public static final long SECOND = 1 * 1000;
+
+    public static final long MINUTE = 60 * SECOND;
+
+    public static final long HOUR = 60 * MINUTE;
+
+    public static final long DAY = 24 * HOUR;
+
     @Nonnull
     public static String format(@Nonnull DateFormat formatter, @Nonnull Date date) {
         return formatter.format(date);

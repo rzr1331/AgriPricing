@@ -1,13 +1,10 @@
 package parsers.enam;
 
-import com.sun.tools.javac.util.Pair;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
-import parsers.CommodityPriceDto;
 import parsers.CommodityPriceSource;
 import parsers.CrawlCommodityPriceDto;
 import parsers.DateUtils;
@@ -16,7 +13,6 @@ import parsers.HttpHeaderUtils;
 import parsers.HttpRequestDto;
 import parsers.HttpResponseDto;
 import parsers.RequestType;
-import parsers.UnMappedInfoDto;
 
 public class EnamCrawlingService {
     
