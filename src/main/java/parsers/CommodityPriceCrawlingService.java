@@ -3,12 +3,14 @@ package parsers;
 import java.io.IOException;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
+import parsers.commdity_online.MandiCrawlingService;
 import parsers.enam.EnamCrawlingService;
 
 public class CommodityPriceCrawlingService {
 
     
     private EnamCrawlingService enamCrawlingService = new EnamCrawlingService();
+    private MandiCrawlingService mandiCrawlingService=new MandiCrawlingService();
 
     private CommodityPricePublishingService commodityPricePublishingService = new CommodityPricePublishingService();
 
@@ -18,6 +20,9 @@ public class CommodityPriceCrawlingService {
         switch (commodityPriceSource) {
             case ENAM:
                 crawlCommodityPriceDtos = enamCrawlingService.handleRequest(date);
+                break;
+            case COMMODITY_ONLINE:
+                crawlCommodityPriceDtos=mandiCrawlingService.handleRequest();
                 break;
         }
 
