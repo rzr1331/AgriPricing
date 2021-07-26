@@ -27,7 +27,7 @@ public class MandiParser {
                 Double maxPrice=Double.parseDouble(str3[1]);
                 String date_str=doc.getElementsByClass("la_update-style as_padd").text().substring(15);
                 Long date=DateUtils.parseToLong(mandiParserDateFormat,date_str);
-//                System.out.println("Commodity:"+commodity+",Area:"+area+",Minprice:"+minPrice+",MaxPrice:"+maxPrice+"Date:"+date+",State:"+state);
+                System.out.println("Commodity:"+commodity+",Area:"+area+",Minprice:"+minPrice+",MaxPrice:"+maxPrice+"Date:"+date+",State:"+state);
                 priceDtos.add(CrawlCommodityPriceDto.Builder.crawlCommodityPriceDto()
                         .withProductName(commodity)
                         .withAreaName(area)

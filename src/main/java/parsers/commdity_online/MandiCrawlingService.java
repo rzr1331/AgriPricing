@@ -1,9 +1,10 @@
 package parsers.commdity_online;
 import org.jsoup.Jsoup;
-import parsers.CommodityPriceSource;
-import parsers.CrawlCommodityPriceDto;
+import parsers.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
@@ -14,28 +15,45 @@ public class MandiCrawlingService {
         int count=0;
         List<CrawlCommodityPriceDto> crawlCommodityPriceDtoList=null;
         while(n>0){
-            Document doc=BuildRequest(count);
-            MandiParser mandiParser=new MandiParser();
-            if(crawlCommodityPriceDtoList==null){
-                crawlCommodityPriceDtoList=mandiParser.parseCommodityPrice(doc.toString());
+            HttpRequestDto httpRequestDto = buildRequest(count);
+            HttpClientPool httpClientPool = new HttpClientPool();
+            try {
+                HttpResponseDto responseDto = httpClientPool.executeRequest(httpRequestDto);
+                if (!responseDto.getSuccessful()) {
+                    System.out.println("error while getting response for enam reqeuset [{}] , response [{}]" +
+                            httpRequestDto + responseDto);
+                    return new ArrayList<>();
+                }
+                MandiParser mandiParser = new MandiParser();
+                Document doc=Jsoup.parse(responseDto.getResponseString());
+                Elements items =doc.getElementsByClass("mob_p_12");
+                n=items.size();
+                count+=n;
+                System.out.println(count);
+                if(crawlCommodityPriceDtoList==null){
+                    crawlCommodityPriceDtoList=mandiParser.parseCommodityPrice(responseDto.getResponseString());
+                }
+                else{
+                    crawlCommodityPriceDtoList.addAll(mandiParser.parseCommodityPrice(responseDto.getResponseString()));
+                }
+            } catch (IOException e) {
+                n=0;
+                System.out.println("error while getting data  for domain {}" + CommodityPriceSource.ENAM);
             }
-            else{
-                crawlCommodityPriceDtoList.addAll(mandiParser.parseCommodityPrice(doc.html()));
-            }
-            Elements items =doc.getElementsByClass("mob_p_12");
-            n=items.size();
-            count+=n;
+        }
+        if(crawlCommodityPriceDtoList==null){
+            return new ArrayList();
         }
         return crawlCommodityPriceDtoList;
     }
-    private Document BuildRequest(int count){
-        Document doc = null;
-        try {
-            doc = Jsoup.connect(base_url+count).get();
-        } catch (IOException e) {
-            System.out.println("error while getting data  for domain {}" + CommodityPriceSource.COMMODITY_ONLINE);
-        }
-//        System.out.println(base_url+count);
-        return doc;
+    private HttpRequestDto buildRequest(int count){
+        String url = CommodityPriceSource.COMMODITY_ONLINE.getUrl()+count;
+        Map<String, String> headers = HttpHeaderUtils.getApplicationFormURLEncodedHeaders();
+        return HttpRequestDto.Builder.httpRequestDto()
+                .withRequestType(RequestType.GET)
+                .withUrl(url)
+                .withHeaders(headers)
+                .withPayload("")
+                .build();
     }
 }
