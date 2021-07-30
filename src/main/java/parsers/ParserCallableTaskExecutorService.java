@@ -1,6 +1,5 @@
 package parsers;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import org.apache.commons.collections.CollectionUtils;
-
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -20,7 +18,7 @@ import static java.util.stream.Collectors.toList;
 
 public class ParserCallableTaskExecutorService {
 
-    private ExecutorService threadPool = Executors.newFixedThreadPool(10);
+    private ExecutorService threadPool = Executors.newFixedThreadPool(6);
 
     private HttpClientPool httpClientPool = new HttpClientPool();
 
