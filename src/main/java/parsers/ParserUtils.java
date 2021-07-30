@@ -1,5 +1,9 @@
 package parsers;
 
+import java.util.Optional;
+import javax.annotation.Nonnull;
+import org.apache.commons.lang3.StringUtils;
+
 public class ParserUtils {
 
 
@@ -18,5 +22,21 @@ public class ParserUtils {
         return null;
     }
 
+    public static boolean equalsIgnoreCaseAndIngnoreSpace(@Nonnull String first,
+        @Nonnull String second) {
+        return first.replaceAll(" ", "").
+            equalsIgnoreCase(second.replaceAll(" ", ""));
+    }
 
+    public static Optional<Integer> valueOfString(String str) {
+        if (StringUtils.isEmpty(str)) {
+            return null;
+        }
+        try {
+            return Optional.of(Integer.valueOf(str));
+        } catch (Exception e) {
+            //log.error("error while pricing [{}]", str);
+        }
+        return Optional.empty();
+    }
 }

@@ -7,9 +7,10 @@ import org.json.JSONObject;
 import parsers.CommodityPriceSource;
 import parsers.CrawlCommodityPriceDto;
 import parsers.DateUtils;
+import parsers.ICommodityPricingParser;
 import parsers.ParserUtils;
 
-public class EnamParser {
+public class EnamParser implements ICommodityPricingParser {
     
     private static final String enamParserDateFormat = "yyyy-MM-dd";
     

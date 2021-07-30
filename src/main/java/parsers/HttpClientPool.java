@@ -3,10 +3,10 @@ package parsers;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -83,6 +83,10 @@ public class HttpClientPool {
             throw new UnsupportedOperationException(String.format("Unsupported media type %s", contentType));
         }
 
+        if (headers == null) {
+            headers = Collections.EMPTY_MAP;
+        }
+
         RequestBody body = buildRequestBody(mediaType, payload);
         Request request = new Request.Builder()
                 .url(url)
@@ -122,6 +126,9 @@ public class HttpClientPool {
         String responseString = null;
         if (responseBody != null) {
             responseString = responseBody.string();
+        }
+        if (headers == null) {
+            headers = Collections.EMPTY_MAP;
         }
         response.close();
         return HttpResponseDto.Builder.httpResponseDto()
