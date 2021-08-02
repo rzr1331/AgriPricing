@@ -39,7 +39,7 @@ public class AgriPlusParser implements ICommodityPricingParser {
                 }
                 String date_str=rowitems.get(9).text();
                 Long date= DateUtils.parseToLong(mandiParserDateFormat,date_str);
-                System.out.println("Commodity:"+commodity+",Area:"+area+",Minprice:"+minPrice+",MaxPrice:"+maxPrice+"Date:"+date+",State:"+state);
+//                System.out.println("Commodity:"+commodity+",Area:"+area+",Minprice:"+minPrice+",MaxPrice:"+maxPrice+"Date:"+date+",State:"+state);
                 priceDtos.add(CrawlCommodityPriceDto.Builder.crawlCommodityPriceDto()
                         .withProductName(commodity)
                         .withAreaName(area)
@@ -57,22 +57,36 @@ public class AgriPlusParser implements ICommodityPricingParser {
     public HashSet<String> getStates(String rawResponse){
         Document doc= Jsoup.parse(rawResponse);
         HashSet<String> states_list=new HashSet<String>();
-        Elements items = doc.getElementsByClass("card-wrapper");
+        Elements items=doc.getElementById("state").getElementsByTag("option");
         for(Element element:items){
-            String link=element.select("a[href]").attr("href");
-            states_list.add(link.split("/")[4]);
-//            System.out.println(link.split("/")[4]);
+            String state=element.text();
+            if(state.equalsIgnoreCase("select state")){
+                continue;
+            }
+
+            state=state.replace(" ","-");
+            state=state.replace(")","");
+            state =state.replace("(","-");
+            states_list.add(state.toLowerCase());
+//            System.out.println(state.toLowerCase());
         }
         return states_list;
+
     }
     public HashSet<String> get_coms(String rawResponse){
         Document doc= Jsoup.parse(rawResponse);
         HashSet<String> coms_list=new HashSet<String>();
-        Elements items = doc.getElementsByClass("card-wrapper");
+        Elements items=doc.getElementById("commodity").getElementsByTag("option");
         for(Element element:items){
-            String link=element.select("a[href]").attr("href");
-            coms_list.add(link.split("/")[4]);
-//            System.out.println(link);
+            String commodity=element.text();
+            if(commodity.equalsIgnoreCase("Any Commodity")){
+                continue;
+            }
+//            System.out.print(commodity.toLowerCase()+":   ");
+            commodity=commodity.replace(" ","-").replace("/","-");
+            commodity=commodity.replace(")","").replace(",","-");
+            commodity =commodity.replace("(","-").replace(".","-").replace("--","-");
+            coms_list.add(commodity.toLowerCase());
         }
         return coms_list;
     }

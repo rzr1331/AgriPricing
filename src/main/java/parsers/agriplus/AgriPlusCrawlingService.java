@@ -9,45 +9,26 @@ public class AgriPlusCrawlingService {
     private static HashSet<String> states_list;
     private static HashSet<String> coms_list;
     public List<CrawlCommodityPriceDto> handleRequest(long date) {
-        HttpRequestDto httpRequestDtoComs = buildRequest("https://agriplus.in/mandi","","");
-        HttpClientPool httpClientPoolComs = new HttpClientPool();
-        try{
-            HttpResponseDto responseDto = httpClientPoolComs.executeRequest(httpRequestDtoComs);
+
+        //Building all urls for states and commodities
+        HttpRequestDto httpRequestDto = buildRequest("https://agriplus.in/price/","all","");
+        HttpClientPool httpClientPool = new HttpClientPool();
+        AgriPlusParser agriPlusParser1=new AgriPlusParser();
+        try {
+            HttpResponseDto responseDto= httpClientPool.executeRequest(httpRequestDto);
             if(!responseDto.getSuccessful()){
                 System.out.println("error while getting response for enam reqeuset [{}] , response [{}]" +
-                        httpRequestDtoComs + responseDto);
+                        httpRequestDto + responseDto);
             }
-            System.out.println("check");
-            AgriPlusParser agriPlusParser = new AgriPlusParser();
-            states_list= agriPlusParser.getStates(responseDto.getResponseString());
-        }
-        catch (Exception e){
+            states_list = agriPlusParser1.getStates(responseDto.getResponseString());
+            coms_list=agriPlusParser1.get_coms(responseDto.getResponseString());
+        } catch (IOException e) {
+            states_list=new HashSet<String>();
+            coms_list=new HashSet<String>();
             e.printStackTrace();
         }
-        int count=1;
-        coms_list=new HashSet<String>();
-        while(count>0){
-            HttpRequestDto httpRequestDto = buildRequest("https://agriplus.in/price/","all",count+"");
-            HttpClientPool httpClientPool = new HttpClientPool();
-            try{
-                HttpResponseDto responseDto = httpClientPool.executeRequest(httpRequestDto);
-                if(!responseDto.getSuccessful()){
-                    System.out.println("error while getting response for enam reqeuset [{}] , response [{}]" +
-                            httpRequestDtoComs + responseDto);
-                }
-                AgriPlusParser agriPlusParser = new AgriPlusParser();
-                HashSet<String> coms=agriPlusParser.get_coms(responseDto.getResponseString());
-                if(coms.size()==0)count=0;
-                else{
-                    count++;
-                    coms_list.addAll(coms);
-                }
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-//        List<CrawlCommodityPriceDto> crawlCommodityPriceDtoList=null;
+
+
         List<HttpRequestDto> httpRequestDtosList = new ArrayList<>();
         ParserCallableTaskExecutorService parserCallableTaskExecutorService =
                 new ParserCallableTaskExecutorService();
