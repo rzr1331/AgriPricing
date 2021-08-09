@@ -48,7 +48,7 @@ public class AgriPlusParser implements ICommodityPricingParser {
                         .withMinPrice(minPrice)
                         .withMaxPrice(maxPrice)
                         .withDate(date)
-                        .withSource(CommodityPriceSource.COMMODITY_ONLINE)
+                        .withSource(CommodityPriceSource.AGRIPLUS)
                         .build());
             }
         }

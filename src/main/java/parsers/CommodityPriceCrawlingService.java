@@ -3,6 +3,7 @@ package parsers;
 import java.io.IOException;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
+import parsers.agmart.AgmartCrawlingService;
 import parsers.agriplus.AgriPlusCrawlingService;
 import parsers.commodityOnline.CommodityOnlineCrawlingService;
 import parsers.enam.EnamCrawlingService;
@@ -13,7 +14,7 @@ public class CommodityPriceCrawlingService {
     private EnamCrawlingService enamCrawlingService = new EnamCrawlingService();
     private CommodityOnlineCrawlingService commodityPriceCrawlingService = new CommodityOnlineCrawlingService();
     private AgriPlusCrawlingService agriPlusCrawlingService=new AgriPlusCrawlingService();
-
+    private AgmartCrawlingService agmartCrawlingService=new AgmartCrawlingService();
     private CommodityPricePublishingService commodityPricePublishingService = new CommodityPricePublishingService();
 
     public void crawlCommodityPrice(CommodityPriceSource commodityPriceSource, Long date) {
@@ -27,6 +28,8 @@ public class CommodityPriceCrawlingService {
                 crawlCommodityPriceDtos = commodityPriceCrawlingService.handleRequest(date);
             case AGRIPLUS:
                 crawlCommodityPriceDtos= agriPlusCrawlingService.handleRequest(date);
+            case AGMART:
+                crawlCommodityPriceDtos=agmartCrawlingService.handleRequest(date);
         }
 
         if (CollectionUtils.isNotEmpty(crawlCommodityPriceDtos)) {

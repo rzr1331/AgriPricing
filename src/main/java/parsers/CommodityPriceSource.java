@@ -8,6 +8,7 @@ public enum CommodityPriceSource {
 
     ENAM("https://enam.gov.in/web/Ajax_ctrl/trade_data_list"),
     AGRIPLUS("https://agriplus.in/prices/"),
+    AGMART("https://agmart.in/searchmarketquery"),
     COMMODITY_ONLINE("https://www.commodityonline.com/mandiprices/");;
 
     private String url;

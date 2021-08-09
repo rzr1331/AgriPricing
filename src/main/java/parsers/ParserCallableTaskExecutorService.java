@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toList;
 
 public class ParserCallableTaskExecutorService {
 
-    private ExecutorService threadPool = Executors.newFixedThreadPool(6);
+    private ExecutorService threadPool = Executors.newFixedThreadPool(10);
 
     private HttpClientPool httpClientPool = new HttpClientPool();
 
