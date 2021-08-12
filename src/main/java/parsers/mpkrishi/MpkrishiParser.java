@@ -4,8 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import parsers.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MpkrishiParser implements ICommodityPricingParser {
     public static void setDate(long date) {
@@ -14,8 +13,8 @@ public class MpkrishiParser implements ICommodityPricingParser {
     private static long date;
     private static final String mpkrishiParserParserDateFormat = "dd-MM-yyyy";
     public List<CrawlCommodityPriceDto> parseCommodityPrice(String rawResponse){
+
         List<CrawlCommodityPriceDto> priceDtos = new ArrayList<>();
-        System.out.println(rawResponse);
         JSONArray priceArray = new JSONArray(rawResponse);
         for(int i=1;i<priceArray.length();i++){
             JSONObject object = (JSONObject) priceArray.get(i);
@@ -33,7 +32,7 @@ public class MpkrishiParser implements ICommodityPricingParser {
                 continue;
             }
             priceDtos.add(CrawlCommodityPriceDto.Builder.crawlCommodityPriceDto()
-                    .withProductName(commodity.substring(1))
+                    .withProductName(commodity.substring(2))
                     .withAreaName(area.substring(1))
                     .withCity(city)
                     .withState(state)

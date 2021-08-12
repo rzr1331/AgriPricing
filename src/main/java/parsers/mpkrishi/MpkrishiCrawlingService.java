@@ -36,10 +36,7 @@ public class MpkrishiCrawlingService {
         return new ArrayList<>();
     }
     private HttpRequestDto buildRequest(Long date) {
-        //Previous day
-        //Long dateLong = System.currentTimeMillis() - DateUtils.DAY;
         String dateStr = DateUtils.format(new SimpleDateFormat("dd-MM-YYYY"), date);
-        System.out.println(dateStr);
         String[] dates=dateStr.split("-");
         String payload = "Dte="+dates[0]+"%2F"+dates[1]+"%2F"+dates[2];
         String url = CommodityPriceSource.MPKRISHI.getUrl()+"?"+payload;
