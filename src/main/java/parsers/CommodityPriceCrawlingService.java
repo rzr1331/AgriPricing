@@ -7,6 +7,7 @@ import parsers.agmart.AgmartCrawlingService;
 import parsers.agriplus.AgriPlusCrawlingService;
 import parsers.commodityOnline.CommodityOnlineCrawlingService;
 import parsers.enam.EnamCrawlingService;
+import parsers.kissanhelpline.KissanhelplineCrwalingService;
 
 public class CommodityPriceCrawlingService {
 
@@ -15,8 +16,8 @@ public class CommodityPriceCrawlingService {
     private CommodityOnlineCrawlingService commodityPriceCrawlingService = new CommodityOnlineCrawlingService();
     private AgriPlusCrawlingService agriPlusCrawlingService=new AgriPlusCrawlingService();
     private AgmartCrawlingService agmartCrawlingService=new AgmartCrawlingService();
+    private KissanhelplineCrwalingService kissanhelplineCrwalingService=new KissanhelplineCrwalingService();
     private CommodityPricePublishingService commodityPricePublishingService = new CommodityPricePublishingService();
-
     public void crawlCommodityPrice(CommodityPriceSource commodityPriceSource, Long date) {
         List<CrawlCommodityPriceDto> crawlCommodityPriceDtos = null;
 
@@ -30,6 +31,8 @@ public class CommodityPriceCrawlingService {
                 crawlCommodityPriceDtos= agriPlusCrawlingService.handleRequest(date);
             case AGMART:
                 crawlCommodityPriceDtos=agmartCrawlingService.handleRequest(date);
+            case KISSANHELPLINE:
+                crawlCommodityPriceDtos=kissanhelplineCrwalingService.handleRequest(date);
         }
 
         if (CollectionUtils.isNotEmpty(crawlCommodityPriceDtos)) {
