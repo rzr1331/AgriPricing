@@ -27,7 +27,7 @@ public class CommodityPriceCrawlingService {
                 crawlCommodityPriceDtos=mandiCrawlingService.handleRequest();
                 break;
             case AGRIPLUS:
-                crawlCommodityPriceDtos= agriPlusCrawlingService.handleRequest();
+                crawlCommodityPriceDtos= agriPlusCrawlingService.handleRequest(date);
         }
 
 

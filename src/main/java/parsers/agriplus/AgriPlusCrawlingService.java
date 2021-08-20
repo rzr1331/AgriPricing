@@ -10,7 +10,7 @@ import java.util.Map;
 public class AgriPlusCrawlingService {
     private static HashSet<String> states_list;
     private static HashSet<String> coms_list;
-    public List<CrawlCommodityPriceDto> handleRequest() {
+    public List<CrawlCommodityPriceDto> handleRequest(long date) {
         HttpRequestDto httpRequestDtoComs = buildRequest("https://agriplus.in/mandi","","");
         HttpClientPool httpClientPoolComs = new HttpClientPool();
         try{
@@ -19,7 +19,6 @@ public class AgriPlusCrawlingService {
                 System.out.println("error while getting response for enam reqeuset [{}] , response [{}]" +
                         httpRequestDtoComs + responseDto);
             }
-            System.out.println("check");
             AgriPlusParser agriPlusParser = new AgriPlusParser();
             states_list= agriPlusParser.getStates(responseDto.getResponseString());
         }
@@ -49,6 +48,7 @@ public class AgriPlusCrawlingService {
                 e.printStackTrace();
             }
         }
+        AgriPlusParser.setDate(date);
         List<CrawlCommodityPriceDto> crawlCommodityPriceDtoList=null;
             for(String com:coms_list){
                 for (String state:states_list){

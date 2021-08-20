@@ -7,12 +7,19 @@ import parsers.CommodityPriceSource;
 import parsers.CrawlCommodityPriceDto;
 import parsers.DateUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 public class AgriPlusParser {
-    private static final String mandiParserDateFormat = "dd MMM";
+    private static final String mandiParserDateFormat = "dd MMM YYYY";
+    private static long dateRequired;
+
+    public static void setDate(long date) {
+        dateRequired = date;
+    }
+
     public List<CrawlCommodityPriceDto> parseCommodityPrice(String rawResponse) {
         List<CrawlCommodityPriceDto> priceDtos = new ArrayList<>();
         Document doc= Jsoup.parse(rawResponse);
@@ -21,6 +28,9 @@ public class AgriPlusParser {
             return priceDtos;
         }
         Elements items =data.getElementsByTag("tr");
+        SimpleDateFormat df = new SimpleDateFormat(mandiParserDateFormat);
+        String dateText = df.format(dateRequired);
+        Long date= DateUtils.parseToLong(mandiParserDateFormat,dateText);
         int n=items.size();
         if(n>0){
             items.remove(0);
@@ -33,17 +43,20 @@ public class AgriPlusParser {
                 Double minPrice=Double.parseDouble(rowitems.get(6).text());
                 Double maxPrice=Double.parseDouble(rowitems.get(7).text());
                 String date_str=rowitems.get(9).text();
-                Long date= DateUtils.parseToLong(mandiParserDateFormat,date_str);
-//                System.out.println("Commodity:"+commodity+",Area:"+area+",Minprice:"+minPrice+",MaxPrice:"+maxPrice+"Date:"+date+",State:"+state);
+                if(!date_str.equalsIgnoreCase(dateText.substring(0,6))){
+                    continue;
+                }
+                System.out.println(date_str);
+                System.out.println("Commodity:"+commodity+",Area:"+area+",Minprice:"+minPrice+",MaxPrice:"+maxPrice+"Date:"+date+",State:"+state+" dateReq:"+dateRequired);
                 priceDtos.add(CrawlCommodityPriceDto.Builder.crawlCommodityPriceDto()
                         .withProductName(commodity)
                         .withAreaName(area)
-                        .withCity(area)
+                        .withCity(city)
                         .withState(state)
                         .withMinPrice(minPrice)
                         .withMaxPrice(maxPrice)
                         .withDate(date)
-                        .withSource(CommodityPriceSource.COMMODITY_ONLINE)
+                        .withSource(CommodityPriceSource.AGRIPLUS)
                         .build());
             }
         }
