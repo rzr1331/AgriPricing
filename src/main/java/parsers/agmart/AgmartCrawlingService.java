@@ -14,17 +14,18 @@ public class AgmartCrawlingService {
       HashSet<String>state_ids=new HashSet<String>();
         HashSet<String>city_ids=new HashSet<String>();
         HashMap<String,HashSet<String>> state_city=new HashMap<String,HashSet<String>>();
+        HttpClientPool httpClientPool=new HttpClientPool();
         try {
-            Document doc = Jsoup.connect("https://agmart.in/commodity-market").get();
+            HttpRequestDto httpRequestDto=buildRequeStates();
+            HttpResponseDto responseDto =httpClientPool.executeRequest(httpRequestDto);
             AgmartParser agmartParser=new AgmartParser();
-            state_ids=agmartParser.getState_ids(doc.toString());
+            if(responseDto.getSuccessful())
+                state_ids=agmartParser.getState_ids(responseDto.getResponseString());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         for(String state_id:state_ids){
-            HttpRequestDto httpRequestDto=buildRequest_city(state_id);
-            HttpClientPool httpClientPool=new HttpClientPool();
+            HttpRequestDto httpRequestDto=buildRequestCity(state_id);
             AgmartParser agmartParser=new AgmartParser();
             try {
                 HttpResponseDto responseDto=httpClientPool.executeRequest(httpRequestDto);
@@ -71,7 +72,7 @@ public class AgmartCrawlingService {
                 .withPayload(payload)
                 .build();
     }
-    public HttpRequestDto buildRequest_city(String state_id){
+    public HttpRequestDto buildRequestCity(String state_id){
         String url= "https://agmart.in/ajax";
         String payload ="location="+state_id;
         Map<String, String> headers = HttpHeaderUtils.getApplicationFormURLEncodedHeaders();
@@ -80,6 +81,15 @@ public class AgmartCrawlingService {
                 .withUrl(url)
                 .withHeaders(headers)
                 .withPayload(payload)
+                .build();
+    }
+    public HttpRequestDto buildRequeStates(){
+        String url ="https://agmart.in/commodity-market";
+        return HttpRequestDto.Builder.httpRequestDto()
+                .withRequestType(RequestType.GET)
+                .withUrl(url)
+                .withHeaders(Collections.emptyMap())
+                .withPayload(null)
                 .build();
     }
 }

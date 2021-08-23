@@ -54,33 +54,33 @@ public class AgmartParser implements ICommodityPricingParser {
 
     @Override
     public List<CrawlCommodityPriceDto> parseCommodityPrice(String rawResponse) {
-
         List<CrawlCommodityPriceDto> priceDtos = new ArrayList<>();
         Document doc=Jsoup.parse(rawResponse);
         Elements elements=doc.getElementsByClass("row");
         for(Element element:elements){
-            Elements items = element.getElementsByClass("col-lg-4 col-xs-4 col-sm-4");
-            Element commodity=items.first();
-            String commodity_text=commodity.getElementsByTag("a").first().text();
-            String city_text= commodity.getElementsByTag("small").first().text();
-            String min_max=commodity.nextElementSibling().nextElementSibling().getElementsByTag("small").first().text();
-            Double min=Double.parseDouble(min_max.split("-")[0]);
-            Double max=Double.parseDouble(min_max.replace(min_max.split("-")[0],""));
-            if(!(max>0&&min>0)){
-                continue;
+            try{
+                Elements items = element.getElementsByClass("col-lg-4 col-xs-4 col-sm-4");
+                Element commodity=items.first();
+                String commodity_text=commodity.getElementsByTag("a").first().text();
+                String city_text= commodity.getElementsByTag("small").first().text();
+                String min_max=commodity.nextElementSibling().nextElementSibling().getElementsByTag("small").first().text();
+                Double min=Double.parseDouble(min_max.split("-")[0]);
+                Double max=Double.parseDouble(min_max.replace(min_max.split("-")[0],""));
+                String state=city_state.get(city_text);
+                priceDtos.add(CrawlCommodityPriceDto.Builder.crawlCommodityPriceDto()
+                        .withProductName(commodity_text)
+                        .withAreaName(city_text)
+                        .withCity(city_text)
+                        .withState(state)
+                        .withMinPrice(min)
+                        .withMaxPrice(max)
+                        .withDate(date)
+                        .withSource(CommodityPriceSource.AGMART)
+                        .build());
             }
-            String state=city_state.get(city_text);
-            priceDtos.add(CrawlCommodityPriceDto.Builder.crawlCommodityPriceDto()
-                    .withProductName(commodity_text)
-                    .withAreaName(city_text)
-                    .withCity(city_text)
-                    .withState(city_text)
-                    .withMinPrice(min)
-                    .withMaxPrice(max)
-                    .withDate(date)
-                    .withSource(CommodityPriceSource.AGRIPLUS)
-                    .build());
-            System.out.println(commodity_text+";"+city_text+";"+min_max.split("-")[0]+":"+state);
+            catch (Exception e){
+                System.out.println("No valid Element");
+            }
         }
         return priceDtos;
     }

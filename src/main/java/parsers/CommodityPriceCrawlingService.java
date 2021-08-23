@@ -27,12 +27,16 @@ public class CommodityPriceCrawlingService {
                 break;
             case COMMODITY_ONLINE:
                 crawlCommodityPriceDtos = commodityPriceCrawlingService.handleRequest(date);
+                break;
             case AGRIPLUS:
                 crawlCommodityPriceDtos= agriPlusCrawlingService.handleRequest(date);
+                break;
             case AGMART:
                 crawlCommodityPriceDtos=agmartCrawlingService.handleRequest(date);
+                break;
             case KISSANHELPLINE:
                 crawlCommodityPriceDtos=kissanhelplineCrwalingService.handleRequest(date);
+                break;
         }
 
         if (CollectionUtils.isNotEmpty(crawlCommodityPriceDtos)) {
