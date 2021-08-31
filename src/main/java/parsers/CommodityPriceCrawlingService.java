@@ -5,15 +5,12 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import parsers.commdity_online.MandiCrawlingService;
 import parsers.enam.EnamCrawlingService;
-import parsers.supershakti.SuperShaktiCrawlingService;
 
 public class CommodityPriceCrawlingService {
 
     
     private EnamCrawlingService enamCrawlingService = new EnamCrawlingService();
     private MandiCrawlingService mandiCrawlingService=new MandiCrawlingService();
-    private SuperShaktiCrawlingService  superShaktiCrawlingService=new SuperShaktiCrawlingService();
-
     private CommodityPricePublishingService commodityPricePublishingService = new CommodityPricePublishingService();
 
     public void crawlCommodityPrice(CommodityPriceSource commodityPriceSource, Long date) {
@@ -26,9 +23,7 @@ public class CommodityPriceCrawlingService {
             case COMMODITY_ONLINE:
                 crawlCommodityPriceDtos=mandiCrawlingService.handleRequest();
                 break;
-            case SUPERSHAKTI:
-                crawlCommodityPriceDtos= superShaktiCrawlingService.handleRequest();
-                break;
+
         }
 
 
