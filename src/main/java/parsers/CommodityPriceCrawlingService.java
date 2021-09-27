@@ -5,12 +5,14 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import parsers.commdity_online.MandiCrawlingService;
 import parsers.enam.EnamCrawlingService;
+import parsers.tataiscon.TataisconCrawlingService;
 
 public class CommodityPriceCrawlingService {
 
     
     private EnamCrawlingService enamCrawlingService = new EnamCrawlingService();
     private MandiCrawlingService mandiCrawlingService=new MandiCrawlingService();
+    private TataisconCrawlingService tataisconCrawlingService = new TataisconCrawlingService();
     private CommodityPricePublishingService commodityPricePublishingService = new CommodityPricePublishingService();
 
     public void crawlCommodityPrice(CommodityPriceSource commodityPriceSource, Long date) {
@@ -21,9 +23,11 @@ public class CommodityPriceCrawlingService {
                 crawlCommodityPriceDtos = enamCrawlingService.handleRequest(date);
                 break;
             case COMMODITY_ONLINE:
-                crawlCommodityPriceDtos=mandiCrawlingService.handleRequest();
+                crawlCommodityPriceDtos= mandiCrawlingService.handleRequest();
                 break;
-
+            case TATAISCON:
+                crawlCommodityPriceDtos= tataisconCrawlingService.handleRequest();
+                break;
         }
 
 
