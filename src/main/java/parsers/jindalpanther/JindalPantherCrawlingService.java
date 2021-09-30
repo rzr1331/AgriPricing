@@ -1,5 +1,6 @@
 package parsers.jindalpanther;
 
+import okhttp3.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import parsers.*;
@@ -20,8 +21,8 @@ public class JindalPantherCrawlingService {
                         httpRequestDto + responseDto);
                 return new ArrayList<>();
             }
-//            Document doc= Jsoup.parse(responseDto.getResponseString());
-//            System.out.println(doc);
+            Document doc= Jsoup.parse(responseDto.getResponseString());
+            System.out.println(doc);
             JindalPatherParser jindPatherParser=new JindalPatherParser();
             csrfToken=jindPatherParser.getCsrfToken(responseDto.getResponseString());
             System.out.println(csrfToken);
@@ -30,13 +31,6 @@ public class JindalPantherCrawlingService {
             responseDto=httpClientPool.executeRequest(httpRequestDto);
             if(!responseDto.getSuccessful()){
                 System.out.println("error while getting response for jindalPanther reqeuset [{}] , response [{}]" + httpRequestDto + responseDto);
-                String csrfToken1=csrfToken.replaceAll("=","%3D");
-                String payload="statecode=Bihar&_csrf="+csrfToken1;
-                Document doc = Jsoup.connect("https://jindalpanther.com/app/get-district")
-                        .data("x-csrf-token",csrfToken)
-                        .data("x-requested-with","XMLHttpRequest")
-                        .data("Content-Type","application/x-www-form-urlencoded")
-                        .data("payload",payload).post();
                 return new ArrayList<>();
             }
             System.out.println(responseDto.getResponseString());
@@ -59,12 +53,11 @@ public class JindalPantherCrawlingService {
     public HttpRequestDto buildStateRequest(String csrfToken){
         String url = CommodityPriceSource.JindalPanther.getUrl();
         Map<String, String> headers=HttpHeaderUtils.getApplicationFormURLEncodedHeaders();
-        headers.put("x-csrf-token",csrfToken);
+        headers.put("x-csrf-token","SZYNZNjPxJ_y5LsANw3FGWV32Zt-2I9O6OhnnqTr1kckwzUqoqCC5pae0XJ-S6xUNzWM3iqB_jiQry7UydKcFA==");
         headers.put("x-requested-with","XMLHttpRequest");
-        headers.put("path","/app/get-district");
         headers.put("Content-Type","application/x-www-form-urlencoded");
-        csrfToken=csrfToken.replaceAll("=","%3D");
-        String payload="statecode=Bihar&_csrf="+csrfToken;
+        headers.put("cookiee","_ga=GA1.1.629836338.1631602738; _csrf=d68f72db48916b2e85a610de5aca4839eecff18d12590ea8208948bc8c3940b1a%3A2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%22mU8NzoFydzjrIFiMRBUETYqvxGIJm9JS%22%3B%7D; _ga_N6R7BQ8W1X=GS1.1.1632995938.12.0.1632995938.0");
+        String payload="statecode=Bihar&_csrf="+"SZYNZNjPxJ_y5LsANw3FGWV32Zt-2I9O6OhnnqTr1kckwzUqoqCC5pae0XJ-S6xUNzWM3iqB_jiQry7UydKcFA==";
         System.out.println(payload);
         return HttpRequestDto.Builder.httpRequestDto()
                 .withRequestType(RequestType.POST)
