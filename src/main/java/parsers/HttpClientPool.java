@@ -21,14 +21,14 @@ import org.apache.http.entity.ContentType;
 public class HttpClientPool {
 
     public static OkHttpClient client = new OkHttpClient();
-    
+
     public void init() {
         //TODO: need to check for optimal time out
         client = new OkHttpClient().newBuilder()
-                .readTimeout(10, TimeUnit.SECONDS)
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .build();
+            .readTimeout(10, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .build();
         //TODO: remove
         System.out.println(client.toString());
     }
@@ -37,15 +37,17 @@ public class HttpClientPool {
         if (RequestType.GET == httpRequestDto.getRequestType()) {
             return getHttpGetResponseDto(httpRequestDto.getUrl(), httpRequestDto.getHeaders());
         } else {
-            return getHttpPostResponseDto(httpRequestDto.getUrl(), httpRequestDto.getPayload(), httpRequestDto.getHeaders());
+            return getHttpPostResponseDto(httpRequestDto.getUrl(), httpRequestDto.getPayload(),
+                httpRequestDto.getHeaders());
         }
     }
 
-    public HttpResponseDto getHttpGetResponseDto(String url, Map<String, String> headers) throws IOException {
+    public HttpResponseDto getHttpGetResponseDto(String url, Map<String, String> headers)
+        throws IOException {
 
         Response response = getHttpGetResponse(url, headers);
         ResponseBody responseBody = response.body();
-
+        Headers responseHeaders = response.headers();
         String responseString = null;
 
         if (responseBody != null) {
@@ -53,11 +55,12 @@ public class HttpClientPool {
         }
         response.close();
         return HttpResponseDto.Builder.httpResponseDto()
-                .withSuccessful(response.isSuccessful())
-                .withResponseCode(response.code())
-                .withResponseHeaders(response.headers())
-                .withResponseString(responseString)
-                .build();
+            .withSuccessful(response.isSuccessful())
+            .withResponseCode(response.code())
+            .withResponseHeaders(response.headers())
+            .withResponseString(responseString)
+            .withHeaders(responseHeaders)
+            .build();
     }
 
     public Response getHttpGetResponse(String url) throws IOException {
@@ -67,28 +70,30 @@ public class HttpClientPool {
     public Response getHttpGetResponse(String url, Map<String, String> headers) throws IOException {
 
         Request request = new Request.Builder()
-                .headers(Headers.of(headers))
-                .url(url)
-                .build();
+            .headers(Headers.of(headers))
+            .url(url)
+            .build();
         Response response = client.newCall(request).execute();
         return response;
     }
 
-    public Response getHttpPostResponse(String url, String payload, Map<String, String> headers) throws IOException {
+    public Response getHttpPostResponse(String url, String payload, Map<String, String> headers)
+        throws IOException {
 
         String contentType = headers.get(HttpHeaders.CONTENT_TYPE);
         MediaType mediaType = MediaType.parse(contentType);
 
         if (mediaType == null) {
-            throw new UnsupportedOperationException(String.format("Unsupported media type %s", contentType));
+            throw new UnsupportedOperationException(
+                String.format("Unsupported media type %s", contentType));
         }
 
         RequestBody body = buildRequestBody(mediaType, payload);
         Request request = new Request.Builder()
-                .url(url)
-                .headers(Headers.of(headers))
-                .post(body)
-                .build();
+            .url(url)
+            .headers(Headers.of(headers))
+            .post(body)
+            .build();
         Response response = client.newCall(request).execute();
         return response;
     }
@@ -114,10 +119,12 @@ public class HttpClientPool {
         return formBody.build();
     }
 
-    public HttpResponseDto getHttpPostResponseDto(String url, String payload, Map<String, String> headers)
-            throws IOException {
+    public HttpResponseDto getHttpPostResponseDto(String url, String payload,
+        Map<String, String> headers)
+        throws IOException {
 
         Response response = getHttpPostResponse(url, payload, headers);
+        Headers responseHeaders = response.headers();
         ResponseBody responseBody = response.body();
         String responseString = null;
         if (responseBody != null) {
@@ -125,11 +132,11 @@ public class HttpClientPool {
         }
         response.close();
         return HttpResponseDto.Builder.httpResponseDto()
-                .withSuccessful(response.isSuccessful())
-                .withResponseCode(response.code())
-                .withResponseHeaders(response.headers())
-                .withResponseString(responseString)
-                .build();
-
+            .withSuccessful(response.isSuccessful())
+            .withResponseCode(response.code())
+            .withResponseHeaders(response.headers())
+            .withResponseString(responseString)
+            .withHeaders(responseHeaders)
+            .build();
     }
 }

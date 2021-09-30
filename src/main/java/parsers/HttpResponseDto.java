@@ -21,6 +21,8 @@ public class HttpResponseDto {
 
     private String responseString;
 
+    private Headers headers;
+
     public static interface SuccessfulStep {
         ResponseCodeStep withSuccessful(Boolean successful);
     }
@@ -34,19 +36,29 @@ public class HttpResponseDto {
     }
 
     public static interface ResponseStringStep {
-        BuildStep withResponseString(String responseString);
+        HeadersStep withResponseString(String responseString);
+    }
+
+    public static interface HeadersStep {
+        BuildStep withHeaders(Headers headers);
     }
 
     public static interface BuildStep {
         HttpResponseDto build();
     }
 
-
-    public static class Builder implements SuccessfulStep, ResponseCodeStep, ResponseHeadersStep, ResponseStringStep, BuildStep {
+    public static class Builder
+        implements SuccessfulStep, ResponseCodeStep, ResponseHeadersStep, ResponseStringStep,
+        HeadersStep, BuildStep {
         private Boolean successful;
+
         private Integer responseCode;
+
         private Headers responseHeaders;
+
         private String responseString;
+
+        private Headers headers;
 
         private Builder() {
         }
@@ -74,30 +86,36 @@ public class HttpResponseDto {
         }
 
         @Override
-        public BuildStep withResponseString(String responseString) {
+        public HeadersStep withResponseString(String responseString) {
             this.responseString = responseString;
             return this;
         }
 
         @Override
+        public BuildStep withHeaders(Headers headers) {
+            this.headers = headers;
+            return this;
+        }
+
+        @Override
         public HttpResponseDto build() {
-            HttpResponseDto
-                httpResponseDto = new HttpResponseDto();
-            httpResponseDto.setSuccessful(this.successful);
-            httpResponseDto.setResponseCode(this.responseCode);
-            httpResponseDto.setResponseHeaders(this.responseHeaders);
-            httpResponseDto.setResponseString(this.responseString);
-            return httpResponseDto;
+            return new HttpResponseDto(
+                this.successful,
+                this.responseCode,
+                this.responseHeaders,
+                this.responseString,
+                this.headers
+            );
         }
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return "HttpResponseDto{" +
-                "successful=" + successful +
-                ", responseCode=" + responseCode +
-                ", responseHeaders=" + responseHeaders +
-                ", responseString='" + responseString + '\'' +
-                '}';
+            "successful=" + successful +
+            ", responseCode=" + responseCode +
+            ", responseHeaders=" + responseHeaders +
+            ", responseString='" + responseString + '\'' +
+            ", headers=" + headers +
+            '}';
     }
 }

@@ -15,7 +15,7 @@ public class JindalPatherParser {
         String csrfToken= elements.attr("content");
         return csrfToken;
     }
-    Set<String>getStates(String rawResponse){
+    Set<String> getStates(String rawResponse){
         Set<String>states=new HashSet<String>();
         Document doc =Jsoup.parse(rawResponse);
         Elements elements= doc.getElementsByClass("chosen-select js-pantherState").first().getElementsByTag("option");
