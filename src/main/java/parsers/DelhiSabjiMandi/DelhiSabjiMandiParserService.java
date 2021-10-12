@@ -22,8 +22,24 @@ public class DelhiSabjiMandiParserService {
                 Elements columns=row.getElementsByTag("td");
                 if(columns.size()==3){
                     String quantity=columns.get(2).text();
+                    String unit;
                     if(quantity.toLowerCase().contains("kg")){
-                        double price=Double.parseDouble(columns.get(1).text())*100;
+                        quantity=quantity.toLowerCase().replace("kg","").replace(" ","");
+                        unit="Kg";
+                    }
+                    else if(quantity.toLowerCase().contains("g")){
+                        quantity=quantity.toLowerCase().replace("g","").replace(" ","");
+                        unit="g";
+                    }
+                    else{
+                        continue;
+                    }
+                    try{
+                        double q=Double.parseDouble(quantity);
+                        if(unit.equalsIgnoreCase("g")){
+                            q=q/1000;
+                        }
+                        double price=(Double.parseDouble(columns.get(1).text())*100)/q;
                         String commodityName=columns.get(0).text();
                         int index=commodityName.indexOf('(');
                         if(index!=-1){
@@ -39,6 +55,9 @@ public class DelhiSabjiMandiParserService {
                                 .withDate(date)
                                 .withSource(CommodityPriceSource.DELHISABJIMANDI)
                                 .build());
+                    }
+                    catch(Exception e){
+                        System.out.println("Not valid Element");
                     }
                 }
             }
