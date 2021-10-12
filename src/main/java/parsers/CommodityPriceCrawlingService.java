@@ -3,6 +3,7 @@ package parsers;
 import java.io.IOException;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
+import parsers.DelhiSabjiMandi.DelhiSabjiMandiCrawlingService;
 import parsers.commdity_online.MandiCrawlingService;
 import parsers.enam.EnamCrawlingService;
 
@@ -11,6 +12,7 @@ public class CommodityPriceCrawlingService {
     
     private EnamCrawlingService enamCrawlingService = new EnamCrawlingService();
     private MandiCrawlingService mandiCrawlingService=new MandiCrawlingService();
+    private DelhiSabjiMandiCrawlingService delhiSabjiMandiCrawlingService = new DelhiSabjiMandiCrawlingService();
     private CommodityPricePublishingService commodityPricePublishingService = new CommodityPricePublishingService();
 
     public void crawlCommodityPrice(CommodityPriceSource commodityPriceSource, Long date) {
@@ -23,7 +25,9 @@ public class CommodityPriceCrawlingService {
             case COMMODITY_ONLINE:
                 crawlCommodityPriceDtos=mandiCrawlingService.handleRequest();
                 break;
-
+            case DELHISABJIMANDI:
+                crawlCommodityPriceDtos = delhiSabjiMandiCrawlingService.handleRequest(date);
+                break;
         }
 
 
