@@ -11,11 +11,19 @@ import java.util.Map;
 
 public class CommodityInsightsxCrawlingService {
     public List<CrawlCommodityPriceDto> handleRequest(Long date) {
-        HttpRequestDto httpRequestDto = buildRequest();
+        HttpRequestDto httpRequestDto;
 
         HttpClientPool httpClientPool = new HttpClientPool();
 
         try {
+            HttpRequestDto cook = getCookie();
+            HttpResponseDto res = httpClientPool.executeRequest(cook);
+            String set="";
+            if(res.getSuccessful()){
+                set=res.getResponseHeaders().get("Set-Cookie");
+                System.out.println(res.getResponseString());
+            }
+            httpRequestDto = buildRequest(set);
             HttpResponseDto responseDto = httpClientPool.executeRequest(httpRequestDto);
             if (!responseDto.getSuccessful()) {
                 System.out.println("error while getting response for Commodity InsightSX reqeuset [{}] , response [{}]" + httpRequestDto + responseDto);
@@ -30,17 +38,26 @@ public class CommodityInsightsxCrawlingService {
         }
         return new ArrayList<>();
     }
-    private HttpRequestDto buildRequest(){
+    private HttpRequestDto buildRequest(String set){
         String url = CommodityPriceSource.COMMODITYINSIGHTSX.getUrl();
         Map<String, String> headers = HttpHeaderUtils.getApplicationFormURLEncodedHeaders();
-        headers.put("content-type", "application/json");
+        headers.put("content-type", "application/json;charset=UTF-8");
         headers.put("Accept-Encoding","gzip, deflate, br");
-        headers.put("Set-Cookie","JSESSIONID=DF3B2EF3C29A9C8DDC1D521BD6E4613B; Path=/; HttpOnly");
+        headers.put("cookie","_ga=GA1.2.2141299610.1634024906; _gid=GA1.2.1346718099.1634024906; JSESSIONID=1CEC1E08D82CAC775413CE434B3E43C8");
         return HttpRequestDto.Builder.httpRequestDto()
                 .withRequestType(RequestType.POST)
-                .withUrl("https://www.commodityinsightsx.com/api/search/market-commodities-names/")
+                .withUrl("https://www.commodityinsightsx.com/api/search/market-commodities-names/states")
                 .withHeaders(headers)
-                .withPayload("{:}")
+                .withPayload("commodity=Ajwan")
+                .build();
+    }
+    public HttpRequestDto getCookie(){
+        Map<String, String> headers = HttpHeaderUtils.getApplicationFormURLEncodedHeaders();
+        return HttpRequestDto.Builder.httpRequestDto()
+                .withRequestType(RequestType.GET)
+                .withUrl("https://www.commodityinsightsx.com/commodities")
+                .withHeaders(headers)
+                .withPayload("")
                 .build();
     }
 }
