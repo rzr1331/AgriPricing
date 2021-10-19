@@ -1,36 +1,37 @@
 package parsers.CommodityInsigtsx;
-
+import org.apache.http.HttpHeaders;
 import parsers.*;
-import parsers.commdity_online.MandiParser;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 public class CommodityInsightsxCrawlingService {
     public List<CrawlCommodityPriceDto> handleRequest(Long date) {
         HttpRequestDto httpRequestDto;
-
         HttpClientPool httpClientPool = new HttpClientPool();
-
+        HashSet<String>marketurls=new HashSet<String>();
+        List<CrawlCommodityPriceDto> crawlCommodityPriceDtoList = new ArrayList<>();
+        HttpResponseDto responseDto;
+        CommodityInsightsxParser commodityInsightsxParser=new CommodityInsightsxParser();
+        int count=1;
         try {
-            HttpRequestDto cook = getCookie();
-            HttpResponseDto res = httpClientPool.executeRequest(cook);
-            String set="";
-            if(res.getSuccessful()){
-                set=res.getResponseHeaders().get("Set-Cookie");
-                System.out.println(res.getResponseString());
+            while(true){
+                httpRequestDto = buildRequest(count);
+                responseDto = httpClientPool.executeRequest(httpRequestDto);
+                if (!responseDto.getSuccessful()) {
+                    break;
+                }
+                marketurls.addAll(commodityInsightsxParser.getUrls(responseDto.getResponseString()));
+                count++;
             }
-            httpRequestDto = buildRequest(set);
-            HttpResponseDto responseDto = httpClientPool.executeRequest(httpRequestDto);
-            if (!responseDto.getSuccessful()) {
-                System.out.println("error while getting response for Commodity InsightSX reqeuset [{}] , response [{}]" + httpRequestDto + responseDto);
-                return new ArrayList<>();
+            for(String url:marketurls){
+                System.out.println(url);
+                httpRequestDto = buildRequest(url);
+                responseDto = httpClientPool.executeRequest(httpRequestDto);
+                if (!responseDto.getSuccessful()) {
+                    System.out.println("error while getting response for Commodity InsightSX reqeuset [{}] , response [{}]" + httpRequestDto + responseDto);
+                    return new ArrayList<>();
+                }
+                crawlCommodityPriceDtoList.addAll(commodityInsightsxParser.parseCommodityPrice(responseDto.getResponseString(),date));
             }
-            CommodityInsightsxParser commodityInsightsxParser=new CommodityInsightsxParser();
-            List<CrawlCommodityPriceDto> crawlCommodityPriceDtoList = commodityInsightsxParser.parseCommodityPrice(responseDto.getResponseString());
             return crawlCommodityPriceDtoList;
         } catch (IOException e) {
             e.printStackTrace();
@@ -38,24 +39,25 @@ public class CommodityInsightsxCrawlingService {
         }
         return new ArrayList<>();
     }
-    private HttpRequestDto buildRequest(String set){
-        String url = CommodityPriceSource.COMMODITYINSIGHTSX.getUrl();
-        Map<String, String> headers = HttpHeaderUtils.getApplicationFormURLEncodedHeaders();
-        headers.put("content-type", "application/json;charset=UTF-8");
-        headers.put("Accept-Encoding","gzip, deflate, br");
-        headers.put("cookie","_ga=GA1.2.2141299610.1634024906; _gid=GA1.2.1346718099.1634024906; JSESSIONID=1CEC1E08D82CAC775413CE434B3E43C8");
-        return HttpRequestDto.Builder.httpRequestDto()
-                .withRequestType(RequestType.POST)
-                .withUrl("https://www.commodityinsightsx.com/api/search/market-commodities-names/states")
-                .withHeaders(headers)
-                .withPayload("commodity=Ajwan")
-                .build();
-    }
-    public HttpRequestDto getCookie(){
-        Map<String, String> headers = HttpHeaderUtils.getApplicationFormURLEncodedHeaders();
+    private HttpRequestDto buildRequest(int count){
+        String url = "https://www.commodityinsightsx.com/markets/"+count;
+        Map<String, String> headers = new HashMap<String,String>();
+        headers.put(HttpHeaders.CONTENT_TYPE,"application/json");
         return HttpRequestDto.Builder.httpRequestDto()
                 .withRequestType(RequestType.GET)
-                .withUrl("https://www.commodityinsightsx.com/commodities")
+                .withUrl(url)
+                .withHeaders(headers)
+                .withPayload("")
+                .build();
+    }
+    private HttpRequestDto buildRequest(String url){
+        url = CommodityPriceSource.COMMODITYINSIGHTSX.getUrl()+url;
+        Map<String, String> headers = new HashMap<String,String>();
+        headers.put(HttpHeaders.CONTENT_TYPE,"application/json");
+        System.out.println(url);
+        return HttpRequestDto.Builder.httpRequestDto()
+                .withRequestType(RequestType.GET)
+                .withUrl(url    )
                 .withHeaders(headers)
                 .withPayload("")
                 .build();
