@@ -26,7 +26,8 @@ public class JindalPantherCrawlingService {
             csrfToken = jindPatherParser.getCsrfToken(responseDto.getResponseString());
             System.out.println(csrfToken);
             states = jindPatherParser.getStates(responseDto.getResponseString());
-            String cookie = responseDto.getResponseHeaders().value(5);
+            String unformattedCookie = responseDto.getResponseHeaders().value(4);
+            String cookie = unformattedCookie.substring(0, unformattedCookie.indexOf(";"));
             httpRequestDto = buildDistrictRequest(csrfToken,cookie);
             responseDto = httpClientPool.executeRequest(httpRequestDto);
             if (!responseDto.getSuccessful()) {
