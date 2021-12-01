@@ -6,7 +6,9 @@ package parsers;
  */
 public enum CommodityPriceSource {
     ENAM("https://enam.gov.in/web/Ajax_ctrl/trade_data_list"),
-    COMMODITY_ONLINE("https://www.commodityonline.com/mandiprices/");
+    COMMODITY_ONLINE("https://www.commodityonline.com/mandiprices/"),
+    AGRIPLUSSELLLEADS("https://agriplus.in/trade/sell-leads/"),
+    KISSANSUVIDHA("https://agrionline.nic.in/api/PriceTrend/");
 
 
     private String url;
